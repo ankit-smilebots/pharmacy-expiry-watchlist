@@ -1,0 +1,69 @@
+{% extends "watchlist/base.html" %}
+
+{% block title %}My Stock · Pharmacy Expiry Watchlist{% endblock %}
+
+{% block header_actions %}
+  <div class="header-buttons">
+    <a href="{% url 'add' %}" class="btn btn-primary btn-sm">+ Add batch</a>
+    <a href="{% url 'lock' %}" class="btn btn-ghost btn-sm">Lock</a>
+  </div>
+{% endblock %}
+
+{% block content %}
+  <section class="summary">
+    <div class="stat">
+      <span class="stat-num">{{ total_count }}</span>
+      <span class="stat-label">Total batches</span>
+    </div>
+    <div class="stat stat-soon">
+      <span class="stat-num">{{ expiring_soon_count }}</span>
+      <span class="stat-label">Expiring in {{ warning_days }} days</span>
+    </div>
+    <div class="stat stat-expired">
+      <span class="stat-num">{{ expired_count }}</span>
+      <span class="stat-label">Already expired</span>
+    </div>
+  </section>
+
+  <form method="get" action="{% url 'list' %}" class="search" role="search">
+    <input type="search" name="q" value="{{ query }}" placeholder="Search medicine, batch no. or supplier"
+           aria-label="Search batches">
+    <button type="submit" class="btn btn-secondary">Search</button>
+    {% if query %}<a href="{% url 'list' %}" class="btn btn-ghost">Clear</a>{% endif %}
+  </form>
+
+  {% if total_count == 0 %}
+    <div class="empty">
+      {% if query %}
+        <p>No batches match “{{ query }}”.</p>
+        <a href="{% url 'list' %}" class="btn btn-secondary">Show all</a>
+      {% else %}
+        <p class="empty-title">No batches yet</p>
+        <p class="muted">Add your first medicine batch to start tracking expiry dates.</p>
+        <a href="{% url 'add' %}" class="btn btn-primary">+ Add your first batch</a>
+      {% endif %}
+    </div>
+  {% else %}
+
+    {% if expired %}
+      <section class="group group-expired">
+        <h2 class="group-title">⚠️ Expired — clear these out ({{ expired_count }})</h2>
+        <ul class="batch-list">
+          {% for batch in expired %}{% include "watchlist/_batch_card.html" %}{% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    {% if current %}
+      <section class="group">
+        <h2 class="group-title">In stock — soonest expiry first ({{ current|length }})</h2>
+        <ul class="batch-list">
+          {% for batch in current %}{% include "watchlist/_batch_card.html" %}{% endfor %}
+        </ul>
+      </section>
+    {% elif not expired %}
+      <div class="empty"><p class="muted">No matching batches.</p></div>
+    {% endif %}
+
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,43 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0f766e">
+  <title>{% block title %}Pharmacy Expiry Watchlist{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'watchlist/style.css' %}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <a class="brand" href="{% url 'list' %}">
+        <span class="brand-mark">℞</span>
+        <span class="brand-text">
+          <strong>Expiry Watchlist</strong>
+          <small>Stock expiry tracker</small>
+        </span>
+      </a>
+      {% block header_actions %}{% endblock %}
+    </div>
+  </header>
+
+  {% if messages %}
+    <div class="wrap">
+      <ul class="messages">
+        {% for message in messages %}
+          <li class="msg msg-{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <main class="wrap">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">Pharmacy Expiry Watchlist · built for Iqbal Bhai</div>
+  </footer>
+</body>
+</html>

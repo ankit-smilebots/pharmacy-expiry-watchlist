@@ -1,0 +1,24 @@
+{% extends "watchlist/base.html" %}
+
+{% block title %}Unlock · Pharmacy Expiry Watchlist{% endblock %}
+
+{% block content %}
+<div class="unlock-screen">
+  <div class="card unlock-card">
+    <div class="lock-icon">🔒</div>
+    <h1>Stock list is locked</h1>
+    <p class="muted">Enter your password to view your medicine batches.</p>
+
+    <form method="post" action="{% url 'unlock' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}" novalidate>
+      {% csrf_token %}
+      <div class="field">
+        {{ form.password }}
+      </div>
+      {% if form.password.errors %}
+        <p class="field-error">{{ form.password.errors.0 }}</p>
+      {% endif %}
+      <button type="submit" class="btn btn-primary btn-block">Unlock</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

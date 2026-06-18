@@ -1,0 +1,20 @@
+{# Renders a single batch as a card. Expects `batch` in context. #}
+<li class="batch status-{{ batch.status }}">
+  <div class="batch-main">
+    <div class="batch-title">
+      <span class="medicine">{{ batch.medicine_name }}</span>
+      <span class="badge badge-{{ batch.status }}">{{ batch.status_label }}</span>
+    </div>
+    <dl class="batch-meta">
+      <div><dt>Expiry</dt><dd>{{ batch.expiry_date|date:"d M Y" }}</dd></div>
+      <div><dt>Batch no.</dt><dd>{{ batch.batch_number }}</dd></div>
+      <div><dt>Quantity</dt><dd>{{ batch.quantity }}</dd></div>
+      <div><dt>Supplier</dt><dd>{{ batch.supplier }}</dd></div>
+    </dl>
+  </div>
+  <form method="post" action="{% url 'delete' batch.pk %}"
+        onsubmit="return confirm('Remove {{ batch.medicine_name|escapejs }} (batch {{ batch.batch_number|escapejs }})? This cannot be undone.');">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger btn-delete" aria-label="Delete batch">Delete</button>
+  </form>
+</li>

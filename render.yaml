@@ -1,0 +1,29 @@
+# Render.com Blueprint — deploy with one click from a connected GitHub repo.
+# (You can also deploy on Railway, Fly.io, or any host that runs gunicorn;
+#  see README.md for the generic steps.)
+
+databases:
+  - name: pharmacy-db
+    plan: free
+
+services:
+  - type: web
+    name: pharmacy-expiry-watchlist
+    runtime: python
+    plan: free
+    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput"
+    preDeployCommand: "python manage.py migrate --noinput"
+    startCommand: "gunicorn pharmacy.wsgi"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pharmacy-db
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true        # Render generates a strong key
+      - key: DEBUG
+        value: "False"
+      - key: WATCHLIST_PASSWORD
+        sync: false                # set this yourself in the dashboard
+      - key: PYTHON_VERSION
+        value: "3.12.3"
